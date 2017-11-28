@@ -9,9 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -41,10 +44,10 @@ public class Introduction extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
     private static final String TAG = "Introduction";
-    private CallbackManager mCallbackManager;
-    private LoginButton facebookLoginButton;
+//    private CallbackManager mCallbackManager;
+//    private LoginButton facebookLoginButton;
     private FirebaseAuth auth;
-    private static final int SIGN_IN_RESPONSE_CODE = 1;
+//    private static final int SIGN_IN_RESPONSE_CODE = 1;
     private static final int RC_SIGN_IN = 123;
 
     @Override
@@ -97,19 +100,13 @@ public class Introduction extends AppCompatActivity {
 //        });
 
         auth = FirebaseAuth.getInstance();
+        login();
 
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()
-        );
 
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .setLogo(R.drawable.ic_noun_71826_cc)
-                        .build(), RC_SIGN_IN);
+        //SET INTENT TO SHAKE SCREEN
+//        startActivity(new Intent(this, Shake.class));
+
+
 //        facebookLoginButton = (LoginButton) findViewById(R.id.facebook_login_button);
 //        facebookLoginButton.setReadPermissions("email");
 //
@@ -136,6 +133,52 @@ public class Introduction extends AppCompatActivity {
 
     }
 
+    public void login(){
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()
+        );
+
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .setLogo(R.drawable.ic_noun_71826_cc)
+                        .build(), RC_SIGN_IN);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.profile:
+                startActivity(new Intent(this, Profile.class));
+                return true;
+            case R.id.sign_out:
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(Introduction.this, "Signed out", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    login();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -145,6 +188,7 @@ public class Introduction extends AppCompatActivity {
                 FirebaseUser user = auth.getCurrentUser();
                 TextView currentUser = (TextView) findViewById(R.id.current_user);
                 currentUser.setText(user.getDisplayName());
+//                mDatabase.child("users").child(user.getUid()).push().setValue("Burger Hut");
             }else{
                 Log.v(TAG, "Error: " + response);
             }
