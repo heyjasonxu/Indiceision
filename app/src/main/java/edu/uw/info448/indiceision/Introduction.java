@@ -172,7 +172,7 @@ public class Introduction extends AppCompatActivity {
                                 Toast.makeText(Introduction.this, "Signed out", Toast.LENGTH_SHORT).show();
                             }
                         });
-                    login();
+                login();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
