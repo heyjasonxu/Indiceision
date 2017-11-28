@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Indiceision</string>
+    <string name="facebook_app_id">178682106048786</string>
+    <string name="fb_login_protocol_scheme">fb178682106048786</string>
 </resources>

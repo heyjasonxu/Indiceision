@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "413346747083",
+    "firebase_url": "https://indiceision.firebaseio.com",
+    "project_id": "indiceision",
+    "storage_bucket": "indiceision.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413346747083:android:76afb6fba387fde5",
+        "android_client_info": {
+          "package_name": "edu.uw.info448.indiceision"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413346747083-0oucvmc6amvv6o9un3332e97t2efnmjb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.uw.info448.indiceision",
+            "certificate_hash": "69f3c2b245b276036f8f385ef0e303431c1ad4b0"
+          }
+        },
+        {
+          "client_id": "413346747083-pd4i0c121uino4jb1opvjiborljq1c8a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_A3aYalOG9z9rlo7Df-D2EhBBMRB9HkE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413346747083-pd4i0c121uino4jb1opvjiborljq1c8a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
