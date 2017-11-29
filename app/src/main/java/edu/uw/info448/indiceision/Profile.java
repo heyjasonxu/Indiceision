@@ -2,6 +2,13 @@ package edu.uw.info448.indiceision;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -23,6 +30,7 @@ public class Profile extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
     private FirebaseRecyclerAdapter adapter;
+    private static final String TAG = "Profile";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,19 +44,40 @@ public class Profile extends AppCompatActivity {
         TextView displayName = (TextView) findViewById(R.id.user_name);
         displayName.setText(currentUser.getDisplayName());
 
-        Query query = FirebaseDatabase.getInstance().
-                getReference()
+        Query query = mDatabase
                 .child("users")
                 .child(currentUser.getUid())
                 .limitToFirst(50); //Think about limit.
+        Log.v(TAG, "this is the query ");
 
         FirebaseRecyclerOptions<userRestaurant> options = new FirebaseRecyclerOptions.Builder<userRestaurant>()
                 .setQuery(query, userRestaurant.class)
                 .build();
 
-        adapter = new FirebaseRecyclerAdapter<userRestaurant, userRestaurantHolder>(options){
+        adapter = new FirebaseRecyclerAdapter<userRestaurant, userRestaurantViewHolder>(options){
 
-        }
+            @Override
+            public userRestaurantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.restaurant_list_item, parent, false);
+                return new userRestaurantViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(userRestaurantViewHolder holder, int position, userRestaurant model) {
+                Log.v(TAG, "This is the restaurant " + model.getRestaurantName());
+                holder.restaurantName.setText(model.getRestaurantName());
+                holder.restaurantLiked.setText(model.getLiked());
+            }
+        };
+
+        RecyclerView restaurantList = (RecyclerView) findViewById(R.id.restaurant_list);
+        restaurantList.setAdapter(adapter);
+        restaurantList.setLayoutManager(new LinearLayoutManager(this));
+        adapter.notifyDataSetChanged();
+
+
 
 //        ValueEventListener myValueListener = new ValueEventListener() {
 //            @Override
@@ -70,5 +99,17 @@ public class Profile extends AppCompatActivity {
 //
 //        mDatabase.child("users").child(currentUser.getUid()).addValueEventListener(myValueListener);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 }

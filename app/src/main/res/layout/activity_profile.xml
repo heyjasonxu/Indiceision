@@ -14,10 +14,12 @@
         android:layout_height="wrap_content" />
 
     <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/user_name"
         android:id="@+id/restaurant_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
+        android:layout_height="match_parent"
+        android:background="#ECEFF1"
+        tools:listitem="@layout/restaurant_list_item"
     />
 
 

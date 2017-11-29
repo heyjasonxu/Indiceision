@@ -188,7 +188,11 @@ public class Introduction extends AppCompatActivity {
                 FirebaseUser user = auth.getCurrentUser();
                 TextView currentUser = (TextView) findViewById(R.id.current_user);
                 currentUser.setText(user.getDisplayName());
-//                mDatabase.child("users").child(user.getUid()).push().setValue("Burger Hut");
+
+                //ADD A RESTAURANT 
+//                userRestaurant newRestaurant = new userRestaurant("Thai 65", "Yes", "Yes");
+//                mDatabase.child("users").child(user.getUid()).push().setValue(newRestaurant);
+
             }else{
                 Log.v(TAG, "Error: " + response);
             }

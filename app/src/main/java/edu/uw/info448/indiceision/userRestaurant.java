@@ -7,12 +7,12 @@ package edu.uw.info448.indiceision;
 public class userRestaurant {
 
     private String restaurantName;
-    private int visted;
-    private int liked;
+    private String visted;
+    private String liked;
 
     public userRestaurant(){}
 
-    public userRestaurant(String restaurantName, int visted, int liked){
+    public userRestaurant(String restaurantName, String visted, String liked){
         this.restaurantName = restaurantName;
         this.visted = visted;
         this.liked = liked;
@@ -26,19 +26,19 @@ public class userRestaurant {
         this.restaurantName = restaurantName;
     }
 
-    public int getVisted(){
+    public String getVisted(){
         return this.visted;
     }
 
-    public void setVisted(int visted){
+    public void setVisted(String visted){
         this.visted = visted;
     }
 
-    public int getLiked(){
+    public String getLiked(){
         return this.liked;
     }
 
-    public void setLiked(int liked){
+    public void setLiked(String liked){
         this.liked = liked;
     }
 
