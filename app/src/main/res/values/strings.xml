@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Indiceision</string>
+    <string name="title_activity_intent_buttons">IntentButtons</string>
 </resources>
