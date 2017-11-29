@@ -6,9 +6,9 @@ package edu.uw.info448.indiceision;
 
 public class userRestaurant {
 
-    public String restaurantName;
-    public int visted;
-    public int liked;
+    private String restaurantName;
+    private int visted;
+    private int liked;
 
     public userRestaurant(){}
 

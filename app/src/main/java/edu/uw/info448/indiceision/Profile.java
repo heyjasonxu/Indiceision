@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,7 +22,7 @@ public class Profile extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
-
+    private FirebaseRecyclerAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,10 +42,13 @@ public class Profile extends AppCompatActivity {
                 .child(currentUser.getUid())
                 .limitToFirst(50); //Think about limit.
 
-        FirebaseRecyclerOptions<userRestaurant> options = new FirebaseRecyclerOptions<userRestaurant>()
+        FirebaseRecyclerOptions<userRestaurant> options = new FirebaseRecyclerOptions.Builder<userRestaurant>()
                 .setQuery(query, userRestaurant.class)
                 .build();
 
+        adapter = new FirebaseRecyclerAdapter<userRestaurant, userRestaurantHolder>(options){
+
+        }
 
 //        ValueEventListener myValueListener = new ValueEventListener() {
 //            @Override
