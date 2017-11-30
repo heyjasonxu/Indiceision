@@ -189,9 +189,13 @@ public class Introduction extends AppCompatActivity {
                 TextView currentUser = (TextView) findViewById(R.id.current_user);
                 currentUser.setText(user.getDisplayName());
 
-                //ADD A RESTAURANT
+                //ADD A RESTAURANT TO A USER
 //                userRestaurant newRestaurant = new userRestaurant("Thai 65", "Yes", "Yes");
 //                mDatabase.child("users").child(user.getUid()).push().setValue(newRestaurant);
+
+                //ADD A RESTAURANT TO THE RESTAURANT DATABASE
+//                Restaurant goneRestaurant = new Restaurant("2", "Alaadin", 1, 1, 0);
+//                mDatabase.child("restaurants").child(goneRestaurant.getId()).setValue(goneRestaurant);
 
             }else{
                 Log.v(TAG, "Error: " + response);
