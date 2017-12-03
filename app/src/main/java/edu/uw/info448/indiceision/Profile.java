@@ -78,27 +78,6 @@ public class Profile extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
 
-
-//        ValueEventListener myValueListener = new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for(DataSnapshot r: dataSnapshot.getChildren()){
-//                    TextView restaurant = (TextView) findViewById(R.id.restaurant);
-//                    String userRestuarant = (String) r.getValue();
-//                    restaurant.setText(userRestuarant);
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        };
-//
-//
-//        mDatabase.child("users").child(currentUser.getUid()).addValueEventListener(myValueListener);
-
     }
 
     @Override

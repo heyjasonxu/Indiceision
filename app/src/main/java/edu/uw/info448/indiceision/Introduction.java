@@ -44,10 +44,7 @@ public class Introduction extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
     private static final String TAG = "Introduction";
-//    private CallbackManager mCallbackManager;
-//    private LoginButton facebookLoginButton;
     private FirebaseAuth auth;
-//    private static final int SIGN_IN_RESPONSE_CODE = 1;
     private static final int RC_SIGN_IN = 123;
 
     @Override
@@ -73,62 +70,9 @@ public class Introduction extends AppCompatActivity {
 
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-//        final Button login = (Button) findViewById(R.id.login);
-//        login.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.v(TAG, "Button clicked");
-//                FirebaseUser user = auth.getCurrentUser();
-//                if(user != null){
-//                    Log.v(TAG, "This is the current user: " + user.getEmail());
-//                    AuthUI.getInstance().signOut(Introduction.this)
-//                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Void> task) {
-//                                    Log.v(TAG, "Logged out");
-//                                    login.setText("Login With Email");
-//                                }
-//                            });
-//                }else{
-//                    startActivityForResult(
-//                            AuthUI.getInstance().createSignInIntentBuilder().build(), SIGN_IN_RESPONSE_CODE);
-//                    login.setText("Log out");
-//                }
-//
-//
-//            }
-//        });
 
         auth = FirebaseAuth.getInstance();
         login();
-
-
-        //SET INTENT TO SHAKE SCREEN
-//        startActivity(new Intent(this, Shake.class));
-
-
-//        facebookLoginButton = (LoginButton) findViewById(R.id.facebook_login_button);
-//        facebookLoginButton.setReadPermissions("email");
-//
-//        mCallbackManager = CallbackManager.Factory.create();
-//        facebookLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-//            @Override
-//            public void onSuccess(LoginResult loginResult) {
-//                Log.v(TAG, "Facebook login successful: " + loginResult.toString());
-//                handleFacebookAccessToken(loginResult.getAccessToken());
-//            }
-//
-//            @Override
-//            public void onCancel() {
-//                Log.v(TAG, "Facebook login cancelled");
-//            }
-//
-//            @Override
-//            public void onError(FacebookException error) {
-//                Log.v(TAG, "Facebook login error: " + error);
-//
-//            }
-//        });
 
 
     }
@@ -189,38 +133,12 @@ public class Introduction extends AppCompatActivity {
                 TextView currentUser = (TextView) findViewById(R.id.current_user);
                 currentUser.setText(user.getDisplayName());
 
-                //ADD A RESTAURANT TO A USER
-//                userRestaurant newRestaurant = new userRestaurant("Thai 65", "Yes", "Yes");
-//                mDatabase.child("users").child(user.getUid()).push().setValue(newRestaurant);
-
-                //ADD A RESTAURANT TO THE RESTAURANT DATABASE
-//                Restaurant goneRestaurant = new Restaurant("2", "Alaadin", 1, 1, 0);
-//                mDatabase.child("restaurants").child(goneRestaurant.getId()).setValue(goneRestaurant);
 
             }else{
                 Log.v(TAG, "Error: " + response);
             }
         }
-//        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
 
-//    public void handleFacebookAccessToken(AccessToken token){
-//        Log.v(TAG, "handleFacebookAccessToken " + token);
-//
-//        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-//        auth.signInWithCredential(credential)
-//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        if(task.isSuccessful()){
-//                            FirebaseUser currentUser = auth.getCurrentUser();
-//                            Log.v(TAG, "signInWithCreditential success: " + currentUser.getDisplayName());
-//                        }else{
-//                            Log.v(TAG, "signInWithCreditential failed: " + task.getException());
-//                        }
-//                    }
-//                });
-//
-//    }
 }
