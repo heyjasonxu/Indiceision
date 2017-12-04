@@ -23,17 +23,15 @@ public class IntentButtons extends AppCompatActivity {
         goButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Show the location on Google Maps
-                String location = "Maple Hall, Seattle Washington";
-                Uri.Builder locBuilder = new Uri.Builder();
-                locBuilder.encodedAuthority("google.navigation:q=")
-                        .appendPath(location);
-                Uri geoUri = locBuilder.build();
+                String location = "Guanchos Tacos, Seattle, Washington";
+                Uri geoUri = Uri.parse("google.navigation:q=" + Uri.encode(location)
+                                + "&mode=w");
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, geoUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 if (mapIntent.resolveActivity(getPackageManager()) != null) {
                     startActivity(mapIntent);
                 }
-                // Build notification
+                // Build
                 NotificationManager notifyMgr =
                         (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
