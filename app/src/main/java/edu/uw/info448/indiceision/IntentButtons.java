@@ -62,10 +62,12 @@ public class IntentButtons extends AppCompatActivity {
                 //Intent to a Messaging app?
             }
         });
-        Button orderButton = (Button) findViewById(R.id.order_button);
-        orderButton.setOnClickListener(new View.OnClickListener() {
+        Button callButton = (Button) findViewById(R.id.order_button);
+        callButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Intent to Postmates app
+                Uri phoneNumber = Uri.parse("tel:2065472369");
+                Intent callIntent = new Intent(Intent.ACTION_DIAL, phoneNumber);
+                startActivity(callIntent);
             }
         });
     }
