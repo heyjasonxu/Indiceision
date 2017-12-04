@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yelp_client_secret">nPqTAEZlWKkyA9kwaYhGBBEQzQolydbDggtBQkKl1o7UKxYmT1ccUohvoQUa87ea</string>
+    <string name="yelp_client_id">bRf4tJKoth5nh-5mq6Mn8w</string>
+    <string name="yelp_grant_type">client_credentials</string>
+    <string name="google_maps_api_key" translatable="false" templateMergeStrategy="preserve">AIzaSyDCsErPbTmM0R17DDXxEA1ETewN5DsUAHs</string>
+</resources>
