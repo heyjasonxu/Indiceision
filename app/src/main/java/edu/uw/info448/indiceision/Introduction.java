@@ -38,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Introduction extends AppCompatActivity {
@@ -132,7 +133,8 @@ public class Introduction extends AppCompatActivity {
                 FirebaseUser user = auth.getCurrentUser();
                 TextView currentUser = (TextView) findViewById(R.id.current_user);
                 currentUser.setText(user.getDisplayName());
-
+                HashMap<String, Object> update = new HashMap<String, Object>();
+                Log.v(TAG, "This is the key " + mDatabase.child("restaurants").child("1").getKey());
 
             }else{
                 Log.v(TAG, "Error: " + response);
