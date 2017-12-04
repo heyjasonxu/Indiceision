@@ -136,7 +136,7 @@ public class Introduction extends AppCompatActivity {
                 currentUser.setText(user.getDisplayName());
 //                ArrayList<String> liked = new ArrayList<String>();
 //                liked.add(user.getUid());
-
+                startActivity(new Intent(Introduction.this, LocationDetails.class));
             }else{
                 Log.v(TAG, "Error: " + response);
             }

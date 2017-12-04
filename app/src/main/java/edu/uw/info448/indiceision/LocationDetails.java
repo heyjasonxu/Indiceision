@@ -28,6 +28,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -77,6 +79,9 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 
     public static List<Review> reviews;
 
+    private DatabaseReference mDatabase;
+
+
     private boolean currentlyOpen;
     private String budget;
     private String distance;
@@ -99,6 +104,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         rating = (TextView) findViewById(R.id.rating);
         phone = (TextView) findViewById(R.id.phone);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -186,7 +192,18 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         JSONArray list = results.getJSONArray("businesses");
         Random rand = new Random();
         int r = rand.nextInt(list.length());
+
+
         rest = list.getJSONObject(r);
+
+
+        String rId = rest.get("id").toString();
+
+//        mDatabase.child("restaurants").child(rId).child("id").setValue(rId);
+        
+
+
+        Log.v(TAG, "This is the restaurant id " + rId);
         coor = rest.getJSONObject("coordinates");
         lat = Double.parseDouble(coor.get("latitude").toString());
         lng = Double.parseDouble(coor.get("longitude").toString());
