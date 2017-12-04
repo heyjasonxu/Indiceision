@@ -136,7 +136,6 @@ public class Introduction extends AppCompatActivity {
                 currentUser.setText(user.getDisplayName());
 //                ArrayList<String> liked = new ArrayList<String>();
 //                liked.add(user.getUid());
-                mDatabase.child("restaurants").child("1").child("numberVisited").push().setValue(user.getUid());
 
             }else{
                 Log.v(TAG, "Error: " + response);
