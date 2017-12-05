@@ -3,4 +3,7 @@
     <string name="title_activity_intent_buttons">IntentButtons</string>
     <string name="channel_name">Visit Channel</string>
     <string name="channel_description">Channel for the Indiceision Visit Notification</string>
+    <string name="yes_good">Yes, it\'s Good</string>
+    <string name="yes_bad">Yes, Not Good</string>
+    <string name="no">No</string>
 </resources>

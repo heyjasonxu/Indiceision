@@ -1,5 +1,6 @@
 package edu.uw.info448.indiceision;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -23,7 +24,7 @@ public class IntentButtons extends AppCompatActivity {
         goButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Show the location on Google Maps
-                String location = "Guanchos Tacos, Seattle, Washington";
+                String location = "Guanchos Tacos, Seattle, Washington"; //Get this from Yelp API
                 Uri geoUri = Uri.parse("google.navigation:q=" + Uri.encode(location)
                                 + "&mode=w");
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, geoUri);
@@ -44,28 +45,48 @@ public class IntentButtons extends AppCompatActivity {
                     notifyChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
                     notifyMgr.createNotificationChannel(notifyChannel);
                 }
+                Intent yesGoodButton = new Intent(getApplicationContext(),HomeActivity.class);
+                Intent yesBadButton = new Intent(getApplicationContext(),HomeActivity.class);
+                Intent noButton = new Intent(getApplicationContext(),HomeActivity.class);
 
-                NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(IntentButtons.this)
+                yesGoodButton.setAction("Yes:Good");
+                yesBadButton.setAction("Yes:Bad");
+                noButton.setAction("No:None");
+
+                PendingIntent piYesGood = PendingIntent.getService(getApplicationContext(), 0, yesGoodButton, 0);
+                PendingIntent piYesBad = PendingIntent.getService(getApplicationContext(), 0, yesBadButton, 0);
+                PendingIntent piNo = PendingIntent.getService(getApplicationContext(), 0, noButton, 0);
+
+                String restaurantName = "Guanchos Tacos";//Get this from Yelp API
+
+                Notification.Builder notifyBuilder =
+                        new Notification.Builder(IntentButtons.this)
                                 .setSmallIcon(R.drawable.ic_dice)
                                 .setContentTitle("Indiceision")
-                                .setContentText("Did you visit Guanchos Tacos?");
+                                .setContentText("Did you visit "+restaurantName+"?")
+                                .addAction(R.drawable.ic_thumbs_up,
+                                        getString(R.string.yes_good), piYesGood)
+                                .addAction(R.drawable.ic_thumbs_down,
+                                        getString(R.string.yes_bad), piYesBad)
+                                .addAction(R.drawable.ic_cancel_icon,
+                                        getString(R.string.no), piNo);
 
                 int mNotificationId = 001;
 
-                notifyMgr.notify(mNotificationId, mBuilder.build());
+                notifyMgr.notify(mNotificationId, notifyBuilder.build());
             }
         });
-        Button shareButton = (Button) findViewById(R.id.share_button);
+        Button shareButton = findViewById(R.id.share_button);
         shareButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Intent to a Messaging app?
             }
         });
-        Button callButton = (Button) findViewById(R.id.order_button);
+        Button callButton = findViewById(R.id.order_button);
         callButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Uri phoneNumber = Uri.parse("tel:2065472369");
+                String teliNumber = "2065472369"; //Get this from Yelp API
+                Uri phoneNumber = Uri.parse("tel:" + teliNumber);
                 Intent callIntent = new Intent(Intent.ACTION_DIAL, phoneNumber);
                 startActivity(callIntent);
             }
