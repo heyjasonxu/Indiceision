@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#cc0000"
     tools:context="edu.uw.info448.indiceision.Profile">
 
     <TextView
         android:id="@+id/user_name"
         android:textSize="25dp"
         android:textAlignment="center"
+        android:textColor="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

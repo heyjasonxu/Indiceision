@@ -12,9 +12,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -27,6 +31,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -63,6 +75,15 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     private double lng;
     private TextView title, price, rating, phone;
     private Location current;
+    private DatabaseReference mDatabase;
+    private FirebaseAuth auth;
+
+
+    private String rId;
+    private int numberSuggested;
+    private int numberLiked;
+    private int numberVisited;
+
     private boolean currentlyOpen;
     private String budget;
     private String distance;
@@ -89,6 +110,8 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         rating = (TextView) findViewById(R.id.rating);
         phone = (TextView) findViewById(R.id.phone);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        auth = FirebaseAuth.getInstance();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -105,6 +128,39 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         } catch (Exception e) {
 
             e.printStackTrace();
+
+        }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.profile:
+                startActivity(new Intent(this, Profile.class));
+                return true;
+            case R.id.sign_out:
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+                                Toast.makeText(LocationDetails.this, "Signed out", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                startActivity(new Intent(this, Introduction.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -186,7 +242,14 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         JSONArray list = results.getJSONArray("businesses");
         Random rand = new Random();
         int r = rand.nextInt(list.length());
+
+        FirebaseUser user = auth.getCurrentUser();
+
         rest = list.getJSONObject(r);
+        rId = rest.get("id").toString();
+//        rId = "din-tai-fung-seattle";
+
+
         coor = rest.getJSONObject("coordinates");
         lat = Double.parseDouble(coor.get("latitude").toString());
         lng = Double.parseDouble(coor.get("longitude").toString());
@@ -244,6 +307,48 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                 gMap.moveCamera(CameraUpdateFactory.newLatLng(l));
             }
         });
+
+
+        //Set our rating.
+        mDatabase.child("restaurants").child(rId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DataSnapshot suggested = dataSnapshot.child("numberSuggested");
+                numberSuggested = (int) suggested.getChildrenCount();
+                DataSnapshot visited = dataSnapshot.child("numberVisited");
+                numberVisited = (int) visited.getChildrenCount();
+                DataSnapshot liked = dataSnapshot.child("numberLiked");
+                numberLiked = (int) liked.getChildrenCount();
+                String ourRating = "";
+
+                if (numberSuggested == 1) {
+                    ourRating = "You are the first person to be suggested this restaurant!";
+                } else {
+
+                    ourRating = "Ratings from the Indiceisive: Out of " + numberSuggested +
+                            " users that were suggested this restaurant, " + numberVisited +
+                            " users visited the restaurant and " + numberLiked + " liked it";
+                }
+
+                TextView ourRatingText = (TextView) findViewById(R.id.indice_rating);
+                ourRatingText.setText(ourRating);
+                Log.v(TAG, "Here is numberSuggested " + numberSuggested);
+                Log.v(TAG, "Here is numberVisited " + numberVisited);
+                Log.v(TAG, "Here is numberLiked " + numberLiked);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        mDatabase.child("restaurants").child(rId).child("numberSuggested").child(auth.getUid()).setValue(auth.getUid());
+        mDatabase.child("restaurants").child(rId).child("id").setValue(rId);
+        mDatabase.child("restaurants").child(rId).child("restaurantName").setValue(rest.get("name"));
+
 
         getReviews(rest.get("id").toString());
 
@@ -316,8 +421,12 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     public void onConnected(@Nullable Bundle bundle) {
         Log.v(TAG, "GoogleApiClient connected");
 
+
         mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
 
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
@@ -326,6 +435,9 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
             //assumes location settings enabled
 
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            current = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            //START API CALL
+
 //            Location l = new Location("Mock");
 //            l.setLatitude(47.6550);
 //            l.setLongitude(-122.3080);
@@ -334,6 +446,23 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
             //request permission
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         }
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    //START API CALL
+                    onConnected(null);
+                }
+                break;
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -355,8 +484,11 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 
     private String formatPhoneNumber(String phone) {
         Log.v(TAG, phone);
-        return "(" + phone.substring(2, 5) + ") "
-                + phone.substring(5, 8) + "-" + phone.substring(8, 12);
+        if (phone != null) {
+            return "(" + phone.substring(2, 5) + ") "
+                    + phone.substring(5, 8) + "-" + phone.substring(8, 12);
+        }
+        return "No phone number provided";
     }
 
 

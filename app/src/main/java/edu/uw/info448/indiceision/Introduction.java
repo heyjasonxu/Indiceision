@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,13 @@ public class Introduction extends AppCompatActivity {
         login();
         startActivity(new Intent(this, DiceRollActivity.class));
 
+        Button login = (Button) findViewById(R.id.login);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                login();
+            }
+        });
 
     }
 
@@ -56,6 +65,7 @@ public class Introduction extends AppCompatActivity {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
+                        .setTheme(R.style.FirebaseLoginTheme)
                         .setAvailableProviders(providers)
                         .setLogo(R.drawable.ic_noun_71826_cc)
                         .build(), RC_SIGN_IN);
@@ -99,16 +109,19 @@ public class Introduction extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == ResultCodes.OK) {
                 FirebaseUser user = auth.getCurrentUser();
-                TextView currentUser = (TextView) findViewById(R.id.current_user);
-                currentUser.setText(user.getDisplayName());
 //                ArrayList<String> liked = new ArrayList<String>();
 //                liked.add(user.getUid());
+                if (resultCode == ResultCodes.OK) {
 
-            } else {
-                Log.v(TAG, "Error: " + response);
+                    //SEND INTENT TO DICE ACTIVITY INSTEAD
+                    startActivity(new Intent(Introduction.this, LocationDetails.class));
+
+                } else {
+                    Log.v(TAG, "Error: " + response);
+                }
             }
         }
+
+
     }
-
-
 }
