@@ -28,8 +28,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -80,7 +85,11 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     public static List<Review> reviews;
 
     private DatabaseReference mDatabase;
+    private FirebaseAuth auth;
 
+
+    private String rId;
+    private int numberSuggested;
 
     private boolean currentlyOpen;
     private String budget;
@@ -105,13 +114,14 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         phone = (TextView) findViewById(R.id.phone);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        auth = FirebaseAuth.getInstance();
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        new Task().execute();
+
     }
 
     private String getToken() throws Exception {
@@ -193,17 +203,13 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         Random rand = new Random();
         int r = rand.nextInt(list.length());
 
+        FirebaseUser user = auth.getCurrentUser();
 
         rest = list.getJSONObject(r);
+        rId = rest.get("id").toString();
 
 
-        String rId = rest.get("id").toString();
 
-//        mDatabase.child("restaurants").child(rId).child("id").setValue(rId);
-        
-
-
-        Log.v(TAG, "This is the restaurant id " + rId);
         coor = rest.getJSONObject("coordinates");
         lat = Double.parseDouble(coor.get("latitude").toString());
         lng = Double.parseDouble(coor.get("longitude").toString());
@@ -262,6 +268,28 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                 gMap.moveCamera(CameraUpdateFactory.newLatLng(l));
             }
         });
+
+        mDatabase.child("restaurants").child(rId).child("numberSuggested").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                numberSuggested = (int) dataSnapshot.getChildrenCount();
+                Log.v(TAG, "Here is numberSuggested " + numberSuggested);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        mDatabase.child("restaurants").child(rId).child("numberSuggested").child(auth.getUid()).setValue(auth.getUid());
+        mDatabase.child("restaurants").child(rId).child("id").setValue(rId);
+        mDatabase.child("restaurants").child(rId).child("restaurantName").setValue(rest.get("name"));
+
+
+
 
         getReviews(rest.get("id").toString());
 
@@ -335,8 +363,14 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     public void onConnected(@Nullable Bundle bundle) {
         Log.v(TAG, "GoogleApiClient connected");
 
+        new Task().execute();
+
         mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        current = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
