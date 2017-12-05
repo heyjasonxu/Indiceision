@@ -27,6 +27,7 @@ dependencies {
     })
 
 
+    compile 'com.googlecode.json-simple:json-simple:1.1'
 
 
 

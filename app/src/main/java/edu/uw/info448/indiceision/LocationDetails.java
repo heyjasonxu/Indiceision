@@ -5,13 +5,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -29,13 +28,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -48,38 +40,33 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 
 public class LocationDetails extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    public static String TAG = "Detail";
-
     private static final int LOCATION_REQUEST_CODE = 1;
-
-    private MapFragment map;
-
-    private GoogleMap gMap;
-
-    private LocationRequest mLocationRequest;
-
-    private GoogleApiClient mGoogleApiClient;
-
-    private JSONObject rest;
-
-    private JSONObject coor;
-
-    private double lat;
-
-    private double lng;
-
-    private TextView title, price, rating, phone;
-
-    private Location current;
-
+    public static String TAG = "Detail";
     public static List<Review> reviews;
-
+    private MapFragment map;
+    private GoogleMap gMap;
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
+    private JSONObject rest;
+    private JSONObject coor;
+    private double lat;
+    private double lng;
+    private TextView title, price, rating, phone;
+    private Location current;
     private boolean currentlyOpen;
     private String budget;
     private String distance;
+    private String restaurant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,18 +81,31 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                     .build();
         }
 
+        restaurant = getIntent().getExtras().getString(DrawingSurfaceView.BUNDLE_KEY);
+
+
         title = (TextView) findViewById(R.id.title);
         price = (TextView) findViewById(R.id.price);
         rating = (TextView) findViewById(R.id.rating);
         phone = (TextView) findViewById(R.id.phone);
 
 
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        new Task().execute();
+        try {
+            Log.v(TAG, "getRestaurant");
+
+            //Log.v("restaurant here: ", restaurant);
+
+            JSONObject results = new JSONObject(restaurant);
+
+            getRestaurant(results);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 
     private String getToken() throws Exception {
@@ -156,7 +156,6 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet(url);
-
         // add request header
         request.setHeader("Authorization", "Bearer " + token);
 
@@ -180,9 +179,10 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     }
 
 
+    private void getRestaurant(JSONObject results) throws Exception {
 
-    private void getRestaurant() throws Exception {
-        JSONObject results = new JSONObject(search());
+        Log.v(TAG, results.toString());
+
         JSONArray list = results.getJSONArray("businesses");
         Random rand = new Random();
         int r = rand.nextInt(list.length());
@@ -191,16 +191,15 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         lat = Double.parseDouble(coor.get("latitude").toString());
         lng = Double.parseDouble(coor.get("longitude").toString());
         final String pn = rest.get("phone").toString();
-        final TextView reviews = (TextView)findViewById(R.id.reviews);
+        final TextView reviews = (TextView) findViewById(R.id.reviews);
 
 //        Log.v(TAG, rest.toString());
         Log.v(TAG, lat + "");
         Log.v(TAG, lng + "");
         Log.v(TAG, rest.get("rating").toString());
         Log.v(TAG, rest.get("phone").toString());
-        Log.v(TAG,coor.get("latitude").toString());
-        Log.v(TAG,coor.get("longitude").toString());
-
+        Log.v(TAG, coor.get("latitude").toString());
+        Log.v(TAG, coor.get("longitude").toString());
 
 
         runOnUiThread(new Runnable() {
@@ -249,7 +248,6 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         getReviews(rest.get("id").toString());
 
 
-
     }
 
     private void getReviews(String id) throws Exception {
@@ -289,7 +287,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     public void saveReviews(String reviews) throws JSONException {
         JSONObject obj = new JSONObject(reviews);
         JSONArray list = obj.getJSONArray("reviews");
-        for(int i = 0; i < list.length(); i++) {
+        for (int i = 0; i < list.length(); i++) {
             JSONObject rev = list.getJSONObject(i);
             JSONObject user = rev.getJSONObject("user");
             this.reviews.add(new Review(user.get("name").toString(), rev.get("time_created").toString(),
@@ -322,7 +320,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             //have permission, can go ahead and do stuff
 
             //assumes location settings enabled
@@ -332,8 +330,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 //            l.setLatitude(47.6550);
 //            l.setLongitude(-122.3080);
 //            LocationServices.FusedLocationApi.setMockLocation(mGoogleApiClient, l);
-        }
-        else {
+        } else {
             //request permission
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         }
@@ -352,8 +349,8 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onLocationChanged(Location location) {
         current = location;
-        Log.v(TAG,  "Latitude: " + location.getLatitude());
-        Log.v(TAG,  "Longitude: " + location.getLongitude());
+        Log.v(TAG, "Latitude: " + location.getLatitude());
+        Log.v(TAG, "Longitude: " + location.getLongitude());
     }
 
     private String formatPhoneNumber(String phone) {
@@ -363,16 +360,4 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     }
 
 
-    private class Task extends AsyncTask<String, String, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                getRestaurant();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
 }
