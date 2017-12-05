@@ -43,7 +43,6 @@ public class Introduction extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         login();
-        startActivity(new Intent(this, DiceRollActivity.class));
 
         Button login = (Button) findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +113,7 @@ public class Introduction extends AppCompatActivity {
                 if (resultCode == ResultCodes.OK) {
 
                     //SEND INTENT TO DICE ACTIVITY INSTEAD
-                    startActivity(new Intent(Introduction.this, LocationDetails.class));
+                    startActivity(new Intent(this, DiceRollActivity.class));
 
                 } else {
                     Log.v(TAG, "Error: " + response);

@@ -117,19 +117,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        try {
-            Log.v(TAG, "getRestaurant");
 
-            //Log.v("restaurant here: ", restaurant);
-
-            JSONObject results = new JSONObject(restaurant);
-
-            getRestaurant(results);
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
 
     }
 
@@ -261,13 +249,13 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         Log.v(TAG, lng + "");
         Log.v(TAG, rest.get("rating").toString());
         Log.v(TAG, rest.get("phone").toString());
-        Log.v(TAG, coor.get("latitude").toString());
+        Log.v(TAG, "This is the " + coor.get("latitude").toString());
         Log.v(TAG, coor.get("longitude").toString());
 
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
 
                 try {
                     title.setText(rest.get("name").toString());
@@ -305,8 +293,8 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                         .position(l)
                         .title("Marker"));
                 gMap.moveCamera(CameraUpdateFactory.newLatLng(l));
-            }
-        });
+
+//        });
 
 
         //Set our rating.
@@ -403,6 +391,19 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
+        try {
+            Log.v(TAG, "getRestaurant");
+
+            //Log.v("restaurant here: ", restaurant);
+
+            JSONObject results = new JSONObject(restaurant);
+
+            getRestaurant(results);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
     }
 
     @Override
