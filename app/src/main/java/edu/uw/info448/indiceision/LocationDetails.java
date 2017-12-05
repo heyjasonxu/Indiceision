@@ -96,6 +96,8 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 
     private String rId;
     private int numberSuggested;
+    private int numberLiked;
+    private int numberVisited;
 
     private boolean currentlyOpen;
     private String budget;
@@ -244,7 +246,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 
         rest = list.getJSONObject(r);
         rId = rest.get("id").toString();
-
+//        rId = "din-tai-fung-seattle";
 
 
         coor = rest.getJSONObject("coordinates");
@@ -307,11 +309,33 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         });
 
 
-        mDatabase.child("restaurants").child(rId).child("numberSuggested").addListenerForSingleValueEvent(new ValueEventListener() {
+        //Set our rating.
+        mDatabase.child("restaurants").child(rId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                numberSuggested = (int) dataSnapshot.getChildrenCount();
+                DataSnapshot suggested = dataSnapshot.child("numberSuggested");
+                numberSuggested = (int) suggested.getChildrenCount();
+                DataSnapshot visited = dataSnapshot.child("numberVisited");
+                numberVisited = (int) visited.getChildrenCount();
+                DataSnapshot liked = dataSnapshot.child("numberLiked");
+                numberLiked = (int) liked.getChildrenCount();
+                String ourRating = "";
+
+                if(numberSuggested == 1){
+                    ourRating = "You are the first person to be suggested this restaurant!";
+                }else{
+
+                    ourRating = "Ratings from the Indiceisive: Out of " + numberSuggested +
+                            " users that were suggested this restaurant, " + numberVisited +
+                            " users visited the restaurant and " + numberLiked + " liked it";
+                }
+
+                TextView ourRatingText = (TextView) findViewById(R.id.indice_rating) ;
+                ourRatingText.setText(ourRating);
                 Log.v(TAG, "Here is numberSuggested " + numberSuggested);
+                Log.v(TAG, "Here is numberVisited " + numberVisited);
+                Log.v(TAG, "Here is numberLiked " + numberLiked);
+
             }
 
             @Override
