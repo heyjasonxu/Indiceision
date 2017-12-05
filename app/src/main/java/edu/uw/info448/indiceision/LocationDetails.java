@@ -306,6 +306,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
+
         mDatabase.child("restaurants").child(rId).child("numberSuggested").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -318,7 +319,6 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 
             }
         });
-
 
 
         mDatabase.child("restaurants").child(rId).child("numberSuggested").child(auth.getUid()).setValue(auth.getUid());
@@ -400,15 +400,13 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     public void onConnected(@Nullable Bundle bundle) {
         Log.v(TAG, "GoogleApiClient connected");
 
-        //START API CALL
-        new Task().execute();
 
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        current = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
 
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
@@ -417,6 +415,10 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
             //assumes location settings enabled
 
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            current = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            //START API CALL
+            new Task().execute();
+
 //            Location l = new Location("Mock");
 //            l.setLatitude(47.6550);
 //            l.setLongitude(-122.3080);
@@ -426,6 +428,24 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
             //request permission
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         }
+
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case LOCATION_REQUEST_CODE: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                    //START API CALL
+                    onConnected(null);
+                }
+                break;
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
