@@ -10,24 +10,25 @@
 
 
     <ImageView
+        android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:src="@drawable/ic_noun_71826_cc"
         />
 
-    <!--<Button-->
-        <!--android:id="@+id/login"-->
-        <!--android:layout_width="210dp"-->
-        <!--android:layout_height="35dp"-->
-        <!--android:text= "Login with Email"-->
-        <!--android:drawableLeft="@drawable/fui_ic_mail_white_24dp"-->
-        <!--android:backgroundTint="@color/colorRed"-->
-        <!--android:textAllCaps="false"-->
-        <!--android:textColor="@color/colorWhite"-->
-        <!--android:layout_centerInParent="true"-->
-        <!--android:padding="10dp"-->
-    <!--/>-->
+    <Button
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text= "Login"
+        android:backgroundTint="@color/colorPrimary"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/logo"
+        android:padding="10dp"
+    />
 
     <!--<ImageView-->
         <!--android:id="@+id/logo"-->

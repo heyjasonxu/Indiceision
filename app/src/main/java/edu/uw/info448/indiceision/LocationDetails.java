@@ -156,7 +156,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                                 Toast.makeText(LocationDetails.this, "Signed out", Toast.LENGTH_SHORT).show();
                             }
                         });
-
+                startActivity(new Intent(this, Introduction.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -491,8 +491,11 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 
     private String formatPhoneNumber(String phone) {
         Log.v(TAG, phone);
-        return "(" + phone.substring(2, 5) + ") "
-                + phone.substring(5, 8) + "-" + phone.substring(8, 12);
+        if(phone != null){
+            return "(" + phone.substring(2, 5) + ") "
+                    + phone.substring(5, 8) + "-" + phone.substring(8, 12);
+        }
+        return "No phone number provided";
     }
 
 

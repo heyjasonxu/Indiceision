@@ -76,6 +76,13 @@ public class Introduction extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         login();
 
+        Button login = (Button) findViewById(R.id.login);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                login();
+            }
+        });
 
     }
 
