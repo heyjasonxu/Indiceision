@@ -13,9 +13,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -28,6 +32,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -122,6 +128,37 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         mapFragment.getMapAsync(this);
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            case R.id.profile:
+                startActivity(new Intent(this, Profile.class));
+                return true;
+            case R.id.sign_out:
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+                                Toast.makeText(LocationDetails.this, "Signed out", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private String getToken() throws Exception {
@@ -363,6 +400,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     public void onConnected(@Nullable Bundle bundle) {
         Log.v(TAG, "GoogleApiClient connected");
 
+        //START API CALL
         new Task().execute();
 
         mLocationRequest = new LocationRequest();

@@ -89,6 +89,7 @@ public class Introduction extends AppCompatActivity {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
+                        .setTheme(R.style.FirebaseLoginTheme)
                         .setAvailableProviders(providers)
                         .setLogo(R.drawable.ic_noun_71826_cc)
                         .build(), RC_SIGN_IN);
@@ -131,12 +132,10 @@ public class Introduction extends AppCompatActivity {
         if(requestCode == RC_SIGN_IN){
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if(resultCode == ResultCodes.OK){
-                FirebaseUser user = auth.getCurrentUser();
-                TextView currentUser = (TextView) findViewById(R.id.current_user);
-                currentUser.setText(user.getDisplayName());
-//                ArrayList<String> liked = new ArrayList<String>();
-//                liked.add(user.getUid());
+
+                //SEND INTENT TO DICE ACTIVITY INSTEAD
                 startActivity(new Intent(Introduction.this, LocationDetails.class));
+
             }else{
                 Log.v(TAG, "Error: " + response);
             }
