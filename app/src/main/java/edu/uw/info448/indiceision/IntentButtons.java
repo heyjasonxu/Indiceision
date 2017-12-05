@@ -10,6 +10,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -24,7 +25,7 @@ public class IntentButtons extends AppCompatActivity {
         goButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Show the location on Google Maps
-                String location = "Guanchos Tacos, Seattle, Washington"; //Get this from Yelp API
+                String location = "Guanchos Tacos, Seattle, Washington"; //TODO: Get this from Yelp API
                 Uri geoUri = Uri.parse("google.navigation:q=" + Uri.encode(location)
                                 + "&mode=w");
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, geoUri);
@@ -45,8 +46,8 @@ public class IntentButtons extends AppCompatActivity {
                     notifyChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
                     notifyMgr.createNotificationChannel(notifyChannel);
                 }
-                Intent yesGoodButton = new Intent(getApplicationContext(),HomeActivity.class);
-                Intent yesBadButton = new Intent(getApplicationContext(),HomeActivity.class);
+                Intent yesGoodButton = new Intent(getApplicationContext(),HomeActivity.class);//TODO: Change to Profile
+                Intent yesBadButton = new Intent(getApplicationContext(),HomeActivity.class);//TODO: Change to Profile
                 Intent noButton = new Intent(getApplicationContext(),HomeActivity.class);
 
                 yesGoodButton.setAction("Yes:Good");
@@ -57,7 +58,7 @@ public class IntentButtons extends AppCompatActivity {
                 PendingIntent piYesBad = PendingIntent.getService(getApplicationContext(), 0, yesBadButton, 0);
                 PendingIntent piNo = PendingIntent.getService(getApplicationContext(), 0, noButton, 0);
 
-                String restaurantName = "Guanchos Tacos";//Get this from Yelp API
+                String restaurantName = "Guanchos Tacos"; //TODO:Get this from Yelp API
 
                 Notification.Builder notifyBuilder =
                         new Notification.Builder(IntentButtons.this)
@@ -79,13 +80,19 @@ public class IntentButtons extends AppCompatActivity {
         Button shareButton = findViewById(R.id.share_button);
         shareButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //Intent to a Messaging app?
+                String storeURL = "https://www.yelp.com/biz/guanacos-tacos-pupuseria-seattle"; //TODO:Get this from Yelp API
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, storeURL);
+                shareIntent.setType("text/plain");
+                if (shareIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(shareIntent);
+                }
             }
         });
         Button callButton = findViewById(R.id.order_button);
         callButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String teliNumber = "2065472369"; //Get this from Yelp API
+                String teliNumber = "2065472369"; //TODO:Get this from Yelp API
                 Uri phoneNumber = Uri.parse("tel:" + teliNumber);
                 Intent callIntent = new Intent(Intent.ACTION_DIAL, phoneNumber);
                 startActivity(callIntent);
