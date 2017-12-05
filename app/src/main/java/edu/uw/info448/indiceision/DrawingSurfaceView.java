@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -56,11 +57,11 @@ import java.util.Random;
 public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Callback, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     public static final int LOCATION_REQUEST_CODE = 1;
+    public static final String BUNDLE_KEY = "final";
     private static final String TAG = "SurfaceView";
     public static List<Review> reviews;
-    public static final String BUNDLE_KEY = "final";
     public Dice dice; //public for easy access
-    List<String> restaurants;
+    List<Pair<String, JSONObject>> restaurants;
     TextView randomRestaurantTxt;
     private float width = 100;
     private float height = width;
@@ -81,6 +82,7 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     private JSONObject coor;
     private double lat;
     private double lng;
+    int randomInt = -1;
     private boolean started = false;
     private TextView title, price, rating, phone;
     private Location current;
@@ -145,13 +147,18 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
         String restaurant = "";
         /* hit detection */
+
+        Random r = new Random();
+
         if (dice.cx + dice.offset > viewWidth) { //left bound
             dice.cx = viewWidth - dice.offset;
             dice.dx *= -1;
             Log.v(TAG, "hit left");
             if (restaurants != null) {
 
-                restaurant = restaurants.get(new Random().nextInt(restaurants.size()));
+                randomInt = new Random().nextInt(restaurants.size());
+                Pair<String, JSONObject> singlePair = restaurants.get(randomInt);
+                restaurant = singlePair.first;
             }
         } else if (dice.cx - dice.offset < 0) { //right bound
             dice.cx = dice.offset;
@@ -159,7 +166,9 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
             Log.v(TAG, "hit right");
             if (restaurants != null) {
 
-                restaurant = restaurants.get(new Random().nextInt(restaurants.size()));
+                randomInt = new Random().nextInt(restaurants.size());
+                Pair<String, JSONObject> singlePair = restaurants.get(randomInt);
+                restaurant = singlePair.first;
             }
         } else if (dice.cy + dice.offset > viewHeight) { //bottom bound
             dice.cy = viewHeight - dice.offset;
@@ -167,7 +176,9 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
             Log.v(TAG, "hit bottom");
             if (restaurants != null) {
 
-                restaurant = restaurants.get(new Random().nextInt(restaurants.size()));
+                randomInt = new Random().nextInt(restaurants.size());
+                Pair<String, JSONObject> singlePair = restaurants.get(randomInt);
+                restaurant = singlePair.first;
             }
         } else if (dice.cy - dice.offset < 0) { //top bound
             dice.cy = dice.offset;
@@ -175,7 +186,9 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
             Log.v(TAG, "hit top");
             if (restaurants != null) {
 
-                restaurant = restaurants.get(new Random().nextInt(restaurants.size()));
+                randomInt = new Random().nextInt(restaurants.size());
+                Pair<String, JSONObject> singlePair = restaurants.get(randomInt);
+                restaurant = singlePair.first;
             }
         }
 
@@ -215,8 +228,10 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
             if (!started) {
                 started = true;
 
+
                 Intent intent = new Intent(getContext(), LocationDetails.class);
-                intent.putExtra(BUNDLE_KEY, results.toString());
+                intent.putExtra(BUNDLE_KEY, restaurants.get(randomInt).second.toString());
+
 
                 Activity activity = (Activity) getContext();
 
@@ -384,7 +399,7 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
         JSONArray list = results.getJSONArray("businesses");
 
-        restaurants = new ArrayList<String>();
+        restaurants = new ArrayList<Pair<String, JSONObject>>();
 
         for (int i = 0; i < list.length(); i++) {
 
@@ -392,7 +407,9 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
             String restaurantName = restaurant.get("name").toString();
 
-            restaurants.add(restaurantName);
+            Pair<String, JSONObject> pair = new Pair<String, JSONObject>(restaurantName, restaurant);
+
+            restaurants.add(pair);
         }
 
         Random rand = new Random();

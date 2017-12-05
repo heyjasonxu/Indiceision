@@ -7,6 +7,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -86,6 +87,8 @@ public class DiceRollActivity extends AppCompatActivity implements SensorEventLi
                 //Log.v(TAG, "accel: " + acceleration);
 
                 if (acceleration > 5) {
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    v.vibrate(500);
 
                     float min = 2000;
                     float max = 10000;

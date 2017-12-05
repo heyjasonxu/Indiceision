@@ -57,7 +57,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 
 public class LocationDetails extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -88,6 +87,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     private String budget;
     private String distance;
     private String restaurant;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,15 +237,10 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 
     private void getRestaurant(JSONObject results) throws Exception {
 
-        Log.v(TAG, results.toString());
-
-        JSONArray list = results.getJSONArray("businesses");
-        Random rand = new Random();
-        int r = rand.nextInt(list.length());
 
         FirebaseUser user = auth.getCurrentUser();
 
-        rest = list.getJSONObject(r);
+        rest = results;
         rId = rest.get("id").toString();
 //        rId = "din-tai-fung-seattle";
 
