@@ -48,7 +48,6 @@ public class Profile extends AppCompatActivity {
                 .child("users")
                 .child(currentUser.getUid())
                 .limitToFirst(50); //Think about limit.
-        Log.v(TAG, "this is the query ");
 
         FirebaseRecyclerOptions<userRestaurant> options = new FirebaseRecyclerOptions.Builder<userRestaurant>()
                 .setQuery(query, userRestaurant.class)
@@ -71,6 +70,12 @@ public class Profile extends AppCompatActivity {
                 holder.restaurantLiked.setText(model.getLiked());
             }
         };
+
+        //if visted and liked: mDatabase.child("users").child(currentUser.getUid()).push.setValue(userRestaurant)
+        // with liked as yes. Add user to numberVisited and numberLiked for that restaurant (look at numberSuggested)
+        //if visited and not liked: same but like as no and add only to numberVisited for that restaurant
+        //else do nothing
+
 
         RecyclerView restaurantList = (RecyclerView) findViewById(R.id.restaurant_list);
         restaurantList.setAdapter(adapter);
