@@ -368,15 +368,15 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         String token = getToken();
         String url = "https://api.yelp.com/v3/businesses/search?term=restaurants";
 //        String at = "ACCESS_TOKEN=" + token + "&";
-        Log.v("pref", getPrice(DiceRollActivity.preferences.getString("pref_price", null)));
-        Log.v("pref", DiceRollActivity.preferences.getString("pref_distance", null));
+//        Log.v("pref", getPrice(DiceRollActivity.preferences.getString("pref_price", nlul)));
+//        Log.v("pref", DiceRollActivity.preferences.getString("pref_distance", null));
 
 
         url += "&latitude=" + current.getLatitude() + "&longitude=" + current.getLongitude();
-        url += "&radius=" + DiceRollActivity.preferences.getString("pref_distance", null);
+        url += "&radius=" + DiceRollActivity.preferences.getString("pref_distance", "3200");
 
-        url += "&price=" + getPrice(DiceRollActivity.preferences.getString("pref_price", null));
-//        url += "&open_now=" + DiceRollActivity.preferences.getString("pref_open", null);
+        url += "&price=" + getPrice(DiceRollActivity.preferences.getString("pref_price", ""));
+        url += "&open_now=" + DiceRollActivity.preferences.getString("pref_open", "true");
         url += "&limit" + 50;
         Log.v(TAG, url);
 

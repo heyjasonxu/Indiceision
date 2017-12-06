@@ -14,14 +14,7 @@
         android:defaultValue="3200"
         android:inputType="number"
     />
-
-    <ListPreference
-        android:key="pref_cuisine"
-        android:title="Preferred Cuisine"
-        android:entries="@array/pref_cuisine_list"
-        android:defaultValue="@string/default_cuisine"
-        android:entryValues="@array/pref_cuisine_list"
-    />
+    
 
     <SwitchPreference
         android:key="pref_open"

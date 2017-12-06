@@ -11,12 +11,7 @@
         <item>$$$$</item>
     </string-array>
     <string name="default_price">None</string>
-    <string-array name="pref_cuisine_list">
-        <item>Any</item>
-        <item>Thai</item>
-        <item>Indian</item>
-    </string-array>
-    <string name="default_cuisine">Any</string>
+
     <string name="title_activity_reviews">Reviews</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="large_text">
