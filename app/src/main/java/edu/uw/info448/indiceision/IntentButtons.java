@@ -33,9 +33,10 @@ public class IntentButtons extends AppCompatActivity {
                 if (mapIntent.resolveActivity(getPackageManager()) != null) {
                     startActivity(mapIntent);
                 }
-                // Build
+                // Starts the making of the notification
                 NotificationManager notifyMgr =
                         (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                //Only needed if on a phone running Oreo and up
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                     String id = "visit_channel";
                     CharSequence name = getString(R.string.channel_name);
@@ -46,6 +47,7 @@ public class IntentButtons extends AppCompatActivity {
                     notifyChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
                     notifyMgr.createNotificationChannel(notifyChannel);
                 }
+                //Creates the intents for the buttons
                 Intent yesGoodButton = new Intent(getApplicationContext(),HomeActivity.class);//TODO: Change to Profile
                 Intent yesBadButton = new Intent(getApplicationContext(),HomeActivity.class);//TODO: Change to Profile
                 Intent noButton = new Intent(getApplicationContext(),HomeActivity.class);
@@ -53,13 +55,13 @@ public class IntentButtons extends AppCompatActivity {
                 yesGoodButton.setAction("Yes:Good");
                 yesBadButton.setAction("Yes:Bad");
                 noButton.setAction("No:None");
-
+                //Wraps the intents in PendingIntents
                 PendingIntent piYesGood = PendingIntent.getService(getApplicationContext(), 0, yesGoodButton, 0);
                 PendingIntent piYesBad = PendingIntent.getService(getApplicationContext(), 0, yesBadButton, 0);
                 PendingIntent piNo = PendingIntent.getService(getApplicationContext(), 0, noButton, 0);
 
                 String restaurantName = "Guanchos Tacos"; //TODO:Get this from Yelp API
-
+                //Builds the notification using the previously made components
                 Notification.Builder notifyBuilder =
                         new Notification.Builder(IntentButtons.this)
                                 .setSmallIcon(R.drawable.ic_dice)
@@ -77,6 +79,8 @@ public class IntentButtons extends AppCompatActivity {
                 notifyMgr.notify(mNotificationId, notifyBuilder.build());
             }
         });
+
+        //Creates the shareButton
         Button shareButton = findViewById(R.id.share_button);
         shareButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -89,6 +93,8 @@ public class IntentButtons extends AppCompatActivity {
                 }
             }
         });
+
+        //Creates the call button
         Button callButton = findViewById(R.id.order_button);
         callButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
