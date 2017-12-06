@@ -37,8 +37,12 @@ public class DiceRollActivity extends AppCompatActivity implements SensorEventLi
     private Sensor mAccelerometer;
     public static SharedPreferences preferences;
 
+    private boolean focus = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        focus = true;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dice_roll);
 
@@ -55,11 +59,19 @@ public class DiceRollActivity extends AppCompatActivity implements SensorEventLi
         startSensor();
 
 
+    }
 
+    @Override
+    protected void onPause() {
+        focus = false;
+        super.onPause();
     }
 
     @Override
     protected void onResume() {
+
+        focus = true;
+
         Log.v(TAG, "on resume");
         view.started = false;
         super.onResume();
@@ -140,8 +152,12 @@ public class DiceRollActivity extends AppCompatActivity implements SensorEventLi
                 //Log.v(TAG, "accel: " + acceleration);
 
                 if (acceleration > 5) {
-                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                    v.vibrate(500);
+
+                    if (focus) {
+                        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                        v.vibrate(500);
+                    }
+
 
                     float min = 2000;
                     float max = 10000;
