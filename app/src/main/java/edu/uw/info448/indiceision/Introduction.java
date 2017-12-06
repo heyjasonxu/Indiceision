@@ -43,7 +43,7 @@ public class Introduction extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         login();
-        startActivity(new Intent(this, DiceRollActivity.class));
+        //startActivity(new Intent(this, DiceRollActivity.class));
 
         Button login = (Button) findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
