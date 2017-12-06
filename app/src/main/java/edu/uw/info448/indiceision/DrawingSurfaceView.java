@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -12,6 +13,7 @@ import android.graphics.Paint;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -366,8 +368,15 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         String token = getToken();
         String url = "https://api.yelp.com/v3/businesses/search?term=restaurants";
 //        String at = "ACCESS_TOKEN=" + token + "&";
+//        Log.v("pref", getPrice(DiceRollActivity.preferences.getString("pref_price", nlul)));
+//        Log.v("pref", DiceRollActivity.preferences.getString("pref_distance", null));
+
+
         url += "&latitude=" + current.getLatitude() + "&longitude=" + current.getLongitude();
-        url += "&radius=" + 3200;
+        url += "&radius=" + DiceRollActivity.preferences.getString("pref_distance", "3200");
+
+        url += "&price=" + getPrice(DiceRollActivity.preferences.getString("pref_price", ""));
+        url += "&open_now=" + DiceRollActivity.preferences.getString("pref_open", "true");
         url += "&limit" + 50;
         Log.v(TAG, url);
 
@@ -394,6 +403,19 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
 //        Log.v(TAG, result.toString());
         return result.toString();
+    }
+
+    private String getPrice(String price) {
+        if(price.equals("$")) {
+            return "1";
+        } else if(price.equals("$$")) {
+            return "2";
+        } else if(price.equals("$$$")) {
+            return "3";
+        } else if(price.equals("$$$$")) {
+            return "4";
+        }
+        return "";
     }
 
     private void getRestaurant() throws Exception {
@@ -427,7 +449,7 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         Log.v(TAG, lat + "");
         Log.v(TAG, lng + "");
         Log.v("Restaurant Name", rest.get("name").toString());
-
+        getReviews(rest.get("id").toString());
 
     }
 
@@ -468,11 +490,12 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     public void saveReviews(String reviews) throws JSONException {
         JSONObject obj = new JSONObject(reviews);
         JSONArray list = obj.getJSONArray("reviews");
+        this.reviews = new ArrayList<>();
         for (int i = 0; i < list.length(); i++) {
             JSONObject rev = list.getJSONObject(i);
             JSONObject user = rev.getJSONObject("user");
-//            this.reviews.add(new Review(user.get("name").toString(), rev.get("time_created").toString(),
-//                    rev.get("rating").toString(), rev.get("text").toString()));
+            this.reviews.add(new Review(user.get("name").toString(), rev.get("time_created").toString(),
+                    rev.get("rating").toString(), rev.get("text").toString()));
         }
     }
 

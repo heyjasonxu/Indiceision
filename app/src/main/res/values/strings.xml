@@ -11,12 +11,7 @@
         <item>$$$$</item>
     </string-array>
     <string name="default_price">None</string>
-    <string-array name="pref_cuisine_list">
-        <item>Any</item>
-        <item>Thai</item>
-        <item>Indian</item>
-    </string-array>
-    <string name="default_cuisine">Any</string>
+
     <string name="title_activity_reviews">Reviews</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="large_text">
@@ -115,4 +110,8 @@
     <string name="yes_good">Yes, it\'s Good</string>
     <string name="yes_bad">Yes, Not Good</string>
     <string name="no">No</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="title_review_list">Reviews</string>
+    <string name="title_review_detail">Review Detail</string>
 </resources>

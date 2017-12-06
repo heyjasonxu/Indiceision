@@ -327,7 +327,10 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                 String ourRating = "";
 
                 if (numberSuggested == 1) {
-                    ourRating = "You are the first person to be suggested this restaurant!";
+                    ourRating = "Ratings from the Indiceisive: Out of " + numberSuggested +
+                            " users that were suggested this restaurant, " + numberVisited +
+                            " users visited the restaurant and " + numberLiked + " liked it" +
+                            " (You are the first person to be suggested this restaurant!)";
                 } else {
 
                     ourRating = "Ratings from the Indiceisive: Out of " + numberSuggested +
