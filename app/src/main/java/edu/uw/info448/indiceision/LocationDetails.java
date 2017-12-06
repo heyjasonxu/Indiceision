@@ -80,7 +80,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     private JSONObject coor;
     private double lat;
     private double lng;
-    private TextView title, price, rating, phone;
+    private TextView title, price, rating;
     private Location current;
     private DatabaseReference mDatabase;
     private FirebaseAuth auth;
@@ -123,7 +123,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         title = (TextView) findViewById(R.id.title);
         price = (TextView) findViewById(R.id.price);
         rating = (TextView) findViewById(R.id.rating);
-        phone = (TextView) findViewById(R.id.phone);
+//        phone = (TextView) findViewById(R.id.phone);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
@@ -279,20 +279,20 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 //                    }
 
                     phoneNum = formatPhoneNumber(rest.get("phone").toString());
-                    phone.setText(phoneNum);
-                    reviews.setText("  (reviews)");
-
-                    phone.setOnClickListener(new View.OnClickListener() {
-
-                        @Override
-                        public void onClick(View arg0) {
-
-                            // TODO Auto-generated method stub
-                            Intent intent = new Intent(Intent.ACTION_DIAL);
-                            intent.setData(Uri.parse("tel:" + pn.substring(2)));
-                            startActivity(intent);
-                        }
-                    });
+//                    phone.setText(phoneNum);
+                    reviews.setText("Click Here to See Reviews");
+//
+//                    phone.setOnClickListener(new View.OnClickListener() {
+//
+//                        @Override
+//                        public void onClick(View arg0) {
+//
+//                            // TODO Auto-generated method stub
+//                            Intent intent = new Intent(Intent.ACTION_DIAL);
+//                            intent.setData(Uri.parse("tel:" + pn.substring(2)));
+//                            startActivity(intent);
+//                        }
+//                    });
 
                     reviews.setOnClickListener(new View.OnClickListener() {
                         @Override

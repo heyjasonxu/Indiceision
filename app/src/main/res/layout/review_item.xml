@@ -4,19 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
+
     >
 
     <TextView
         android:id="@+id/Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15dp"/>
+        android:textSize="20dp"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/Rating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/Name"/>
+        android:textSize="15dp"
+        android:layout_below="@id/Name"/>
 
     <TextView
         android:id="@+id/Date"
@@ -28,6 +31,6 @@
         android:id="@+id/Review"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Name"/>
+        android:layout_below="@id/Rating"/>
 
 </RelativeLayout>

@@ -56,6 +56,7 @@ public class Reviews extends AppCompatActivity {
         }
 // 4
         ReviewsAdapter adapter = new ReviewsAdapter(this, reviewList);
+
         mListView.setAdapter(adapter);
     }
 //

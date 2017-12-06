@@ -55,8 +55,8 @@ public class ReviewsAdapter extends BaseAdapter {
         TextView review = rowView.findViewById(R.id.Review);
 
         name.setText(r.getName());
-        rating.setText("  Rating: " + r.getRating());
-        date.setText("    " + r.getDate());
+        rating.setText("Rating: " + r.getRating());
+        date.setText("             " + r.getDate());
         review.setText(r.getReview());
         return rowView;
     }
