@@ -68,7 +68,6 @@
             android:name=".Reviews"
             android:label="@string/title_activity_reviews"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".IntentButtons"></activity>
     </application>
 
 </manifest>
