@@ -308,8 +308,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                 }
                 LatLng l = new LatLng(lat, lng);
                 gMap.addMarker(new MarkerOptions()
-                        .position(l)
-                        .title("Marker"));
+                        .position(l));
                 gMap.moveCamera(CameraUpdateFactory.newLatLng(l));
 
 //        });
