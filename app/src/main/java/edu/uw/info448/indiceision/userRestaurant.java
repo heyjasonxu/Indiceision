@@ -11,7 +11,7 @@ public class userRestaurant {
 
     public userRestaurant(){}
 
-    public userRestaurant(String restaurantName, String visted, String liked){
+    public userRestaurant(String restaurantName, String liked){
         this.restaurantName = restaurantName;
         this.liked = liked;
     }

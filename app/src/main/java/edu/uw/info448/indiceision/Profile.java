@@ -51,6 +51,8 @@ public class Profile extends AppCompatActivity {
         TextView displayName = (TextView) findViewById(R.id.user_name);
         displayName.setText(currentUser.getDisplayName());
 
+
+
         Query query = mDatabase
                 .child("users")
                 .child(currentUser.getUid())
@@ -77,6 +79,34 @@ public class Profile extends AppCompatActivity {
                 holder.restaurantLiked.setText(model.getLiked());
             }
         };
+
+        if(getIntent().getStringExtra("yesGoodId") != null){
+            String id = getIntent().getStringExtra("yesGoodId");
+            String name = getIntent().getStringExtra("yesGoodName");
+            Log.v(TAG, "This is the intent id and intent name " + id + " " + name);
+            userRestaurant newRestaurant = new userRestaurant(name, "Yes");
+            mDatabase.child("users").child(currentUser.getUid()).push().setValue(newRestaurant);
+            mDatabase.child("restaurants").child(id).child("numberVisited").child(currentUser.getUid()).setValue(currentUser.getUid());
+            mDatabase.child("restaurants").child(id).child("numberLiked").child(currentUser.getUid()).setValue(currentUser.getUid());
+
+        }else if (getIntent().getStringExtra("yesBadId") != null){
+            String id = getIntent().getStringExtra("yesBadId");
+            String name = getIntent().getStringExtra("yesBadName");
+            userRestaurant newRestaurant = new userRestaurant(name, "No");
+            mDatabase.child("users").child(currentUser.getUid()).push().setValue(newRestaurant);
+            mDatabase.child("restaurants").child(id).child("numberVisited").child(currentUser.getUid()).setValue(currentUser.getUid());
+            Log.v(TAG, "This is the intent id and intent name " + id + " " + name);
+
+        }
+
+
+//            }else if(bundle.getString("yesBadId") != null){
+//                String id = bundle.getString("yesBadId");
+//                String restaurantName = bundle.getString("yesBadName");
+//            }
+//        }
+
+
 
         //if visted and liked: mDatabase.child("users").child(currentUser.getUid()).push.setValue(userRestaurant)
         // with liked as yes. Add user to numberVisited and numberLiked for that restaurant (look at numberSuggested)
