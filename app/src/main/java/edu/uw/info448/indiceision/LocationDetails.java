@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -96,6 +98,9 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     private String distance;
     private String restaurant;
     private String name;
+
+    public static final String KEY = "test";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -266,7 +271,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                     title.setText(rest.get("name").toString());
                     price.setText("Price: " + rest.get("price").toString());
                     rating.setText("Rating: " + rest.get("rating").toString());
-                    phoneNum = formatPhoneNumber(rest.get("phone").toString())
+                    phoneNum = formatPhoneNumber(rest.get("phone").toString());
                     phone.setText(phoneNum);
                     reviews.setText("  (reviews)");
 
@@ -525,27 +530,6 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                     notifyChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
                     notifyMgr.createNotificationChannel(notifyChannel);
                 }
-                //Creates the intents for the buttons
-                Intent yesGoodButton = new Intent(getApplicationContext(),Profile.class);
-                Intent yesBadButton = new Intent(getApplicationContext(),Profile.class);
-                Intent noButton = new Intent(getApplicationContext(),Profile.class);
-
-                yesGoodButton.setAction("Yes:Good");
-                yesBadButton.setAction("Yes:Bad");
-                noButton.setAction("No:None");
-
-                yesGoodButton.putExtra(Intent.EXTRA_TEXT, rId);
-                yesGoodButton.putExtra(Intent.EXTRA_TEXT, name);
-                yesGoodButton.setType("text/plain");
-
-                yesBadButton.putExtra(Intent.EXTRA_TEXT, rId);
-                yesBadButton.putExtra(Intent.EXTRA_TEXT, name);
-                yesBadButton.setType("text/plain");
-
-                //Wraps the intents in PendingIntents
-                PendingIntent piYesGood = PendingIntent.getService(getApplicationContext(), 0, yesGoodButton, 0);
-                PendingIntent piYesBad = PendingIntent.getService(getApplicationContext(), 0, yesBadButton, 0);
-                PendingIntent piNo = PendingIntent.getService(getApplicationContext(), 0, noButton, 0);
 
                 String restaurantName = null;
                 try {
@@ -553,18 +537,44 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+                //Creates the intents for the buttons
+                Intent yesGoodButton = new Intent(getApplicationContext(),Profile.class);
+                Intent yesBadButton = new Intent(LocationDetails.this,Profile.class);
+                Intent noButton = new Intent(LocationDetails.this,Profile.class);
+
+                yesGoodButton.putExtra("yesGoodId", rId);
+                yesGoodButton.putExtra("yesGoodName", restaurantName);
+
+                yesBadButton.putExtra("yesBadId", rId);
+                yesBadButton.putExtra("yesBadName", restaurantName);
+
+//                TaskStackBuilder stackBuilder = TaskStackBuilder.create(LocationDetails.this);
+//                stackBuilder.addParentStack(Profile.class);
+//                stackBuilder.addNextIntent(yesGoodButton);
+//                stackBuilder.addNextIntent(yesBadButton);
+//                stackBuilder.addNextIntent(noButton);
+
+                PendingIntent piYesGood = PendingIntent.getActivity(getApplicationContext(),0, yesGoodButton, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent piYesBad = PendingIntent.getActivity(getApplicationContext(),1, yesBadButton, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent piNo = PendingIntent.getActivity(getApplicationContext(),2, noButton, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+
                 //Builds the notification using the previously made components
-                Notification.Builder notifyBuilder =
-                        new Notification.Builder(LocationDetails.this)
+                NotificationCompat.Builder notifyBuilder =
+                        new NotificationCompat.Builder(LocationDetails.this)
                                 .setSmallIcon(R.drawable.ic_dice)
                                 .setContentTitle("Indiceision")
                                 .setContentText("Did you visit "+restaurantName+"?")
-                                .addAction(R.drawable.ic_thumbs_up,
-                                        getString(R.string.yes_good), piYesGood)
+                                .addAction(0,
+                                        "Yes, It was good", piYesGood)
                                 .addAction(R.drawable.ic_thumbs_down,
                                         getString(R.string.yes_bad), piYesBad)
                                 .addAction(R.drawable.ic_cancel_icon,
                                         getString(R.string.no), piNo);
+
+
 
                 int mNotificationId = 001;
 
