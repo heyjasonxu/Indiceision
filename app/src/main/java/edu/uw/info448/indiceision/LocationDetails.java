@@ -1,10 +1,15 @@
 package edu.uw.info448.indiceision;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,6 +82,8 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     private Location current;
     private DatabaseReference mDatabase;
     private FirebaseAuth auth;
+    private String yelpURL;
+    private String phoneNum;
 
 
     private String rId;
@@ -117,7 +125,9 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
+        createGoButton();
+        createShareButton();
+        createCallButton();
 
     }
 
@@ -232,7 +242,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         rId = rest.get("id").toString();
 //        rId = "din-tai-fung-seattle";
 
-
+        yelpURL = rest.get("url").toString();
         coor = rest.getJSONObject("coordinates");
         lat = Double.parseDouble(coor.get("latitude").toString());
         lng = Double.parseDouble(coor.get("longitude").toString());
@@ -256,9 +266,11 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                     title.setText(rest.get("name").toString());
                     price.setText("Price: " + rest.get("price").toString());
                     rating.setText("Rating: " + rest.get("rating").toString());
-                    if(rest.get("phone").toString() != null) {
-                        phone.setText(formatPhoneNumber(rest.get("phone").toString()));
-                    }
+//                    if(rest.get("phone").toString() != null) {
+//                        phone.setText(formatPhoneNumber(rest.get("phone").toString()));
+//                    }
+                    phoneNum = formatPhoneNumber(rest.get("phone").toString());
+                    phone.setText(phoneNum);
                     reviews.setText("  (reviews)");
 
                     phone.setOnClickListener(new View.OnClickListener() {
@@ -487,6 +499,105 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                     + phone.substring(5, 8) + "-" + phone.substring(8, 12);
         }
         return "No phone number provided";
+    }
+
+    private void createGoButton(){
+        Button goButton = findViewById(R.id.go_button);
+        goButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //Show the location on Google Maps
+                String location = lat + "," + lng;
+                Uri geoUri = Uri.parse("google.navigation:q=" + Uri.encode(location)
+                        + "&mode=w");
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, geoUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(mapIntent);
+                }
+                // Starts the making of the notification
+                NotificationManager notifyMgr =
+                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                //Only needed if on a phone running Oreo and up
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                    String id = "visit_channel";
+                    CharSequence name = getString(R.string.channel_name);
+                    String description = getString(R.string.channel_description);
+                    int importance = NotificationManager.IMPORTANCE_LOW;
+                    NotificationChannel notifyChannel = new NotificationChannel(id, name, importance);
+                    notifyChannel.setDescription(description);
+                    notifyChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    notifyMgr.createNotificationChannel(notifyChannel);
+                }
+                //Creates the intents for the buttons
+                Intent yesGoodButton = new Intent(getApplicationContext(),Profile.class);
+                Intent yesBadButton = new Intent(getApplicationContext(),Profile.class);
+                Intent noButton = new Intent(getApplicationContext(),Profile.class);
+
+                yesGoodButton.setAction("Yes:Good");
+                yesBadButton.setAction("Yes:Bad");
+                noButton.setAction("No:None");
+
+                yesGoodButton.putExtra(Intent.EXTRA_TEXT, rId);
+                yesGoodButton.putExtra(Intent.EXTRA_TEXT, name);
+                yesGoodButton.setType("text/plain");
+
+                yesBadButton.putExtra(Intent.EXTRA_TEXT, rId);
+                yesBadButton.putExtra(Intent.EXTRA_TEXT, name);
+                yesBadButton.setType("text/plain");
+
+                //Wraps the intents in PendingIntents
+                PendingIntent piYesGood = PendingIntent.getService(getApplicationContext(), 0, yesGoodButton, 0);
+                PendingIntent piYesBad = PendingIntent.getService(getApplicationContext(), 0, yesBadButton, 0);
+                PendingIntent piNo = PendingIntent.getService(getApplicationContext(), 0, noButton, 0);
+
+                String restaurantName = null;
+                try {
+                    restaurantName = rest.get("name").toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                //Builds the notification using the previously made components
+                Notification.Builder notifyBuilder =
+                        new Notification.Builder(LocationDetails.this)
+                                .setSmallIcon(R.drawable.ic_dice)
+                                .setContentTitle("Indiceision")
+                                .setContentText("Did you visit "+restaurantName+"?")
+                                .addAction(R.drawable.ic_thumbs_up,
+                                        getString(R.string.yes_good), piYesGood)
+                                .addAction(R.drawable.ic_thumbs_down,
+                                        getString(R.string.yes_bad), piYesBad)
+                                .addAction(R.drawable.ic_cancel_icon,
+                                        getString(R.string.no), piNo);
+
+                int mNotificationId = 001;
+
+                notifyMgr.notify(mNotificationId, notifyBuilder.build());
+            }
+        });
+    }
+    private void createShareButton(){
+        Button shareButton = findViewById(R.id.share_button);
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String storeURL = yelpURL + "\n Sent from Indiceision.";
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, storeURL);
+                shareIntent.setType("text/plain");
+                if (shareIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(shareIntent);
+                }
+            }
+        });
+    }
+    private void createCallButton(){
+        Button callButton = findViewById(R.id.call_button);
+        callButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Uri phoneNumber = Uri.parse("tel:" + phoneNum);
+                Intent callIntent = new Intent(Intent.ACTION_DIAL, phoneNumber);
+                startActivity(callIntent);
+            }
+        });
     }
 
 
