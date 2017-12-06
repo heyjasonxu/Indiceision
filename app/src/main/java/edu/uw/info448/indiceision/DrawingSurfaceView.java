@@ -65,6 +65,7 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     public Dice dice; //public for easy access
     List<Pair<String, JSONObject>> restaurants;
     TextView randomRestaurantTxt;
+    int randomInt = -1;
     private float width = 100;
     private float height = width;
     private float x = 20;
@@ -84,8 +85,7 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     private JSONObject coor;
     private double lat;
     private double lng;
-    int randomInt = -1;
-    private boolean started = false;
+    public boolean started = false;
     private TextView title, price, rating, phone;
     private Location current;
     private boolean currentlyOpen;
@@ -225,7 +225,9 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         if (dice.moved && velocity < 5) {
 
 
-            Log.v(TAG, "startActivity");
+            Log.v(TAG, started + "");
+
+
 
             if (!started) {
                 started = true;
@@ -254,7 +256,7 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     public synchronized void render(Canvas canvas) {
         if (canvas == null) return;
 
-        canvas.drawColor(Color.rgb(51, 10, 111));
+        canvas.drawColor(Color.rgb(204, 0, 0));
 
         canvas.drawRect(dice.left, dice.top, dice.right, dice.bottom, whitePaint);
     }
