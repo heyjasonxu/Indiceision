@@ -82,6 +82,8 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     private Location current;
     private DatabaseReference mDatabase;
     private FirebaseAuth auth;
+    private String yelpURL;
+    private String phoneNum;
 
 
     private String rId;
@@ -240,7 +242,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         rId = rest.get("id").toString();
 //        rId = "din-tai-fung-seattle";
 
-
+        yelpURL = rest.get("url").toString();
         coor = rest.getJSONObject("coordinates");
         lat = Double.parseDouble(coor.get("latitude").toString());
         lng = Double.parseDouble(coor.get("longitude").toString());
@@ -264,7 +266,8 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                     title.setText(rest.get("name").toString());
                     price.setText("Price: " + rest.get("price").toString());
                     rating.setText("Rating: " + rest.get("rating").toString());
-                    phone.setText(formatPhoneNumber(rest.get("phone").toString()));
+                    phoneNum = formatPhoneNumber(rest.get("phone").toString())
+                    phone.setText(phoneNum);
                     reviews.setText("  (reviews)");
 
                     phone.setOnClickListener(new View.OnClickListener() {
@@ -500,7 +503,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         goButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Show the location on Google Maps
-                String location = "Guanchos Tacos, Seattle, Washington"; //TODO: Get this from Yelp API
+                String location = lat + "," + lng;
                 Uri geoUri = Uri.parse("google.navigation:q=" + Uri.encode(location)
                         + "&mode=w");
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, geoUri);
@@ -573,7 +576,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         Button shareButton = findViewById(R.id.share_button);
         shareButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String storeURL = "https://www.yelp.com/biz/guanacos-tacos-pupuseria-seattle"; //TODO:Get this from Yelp API
+                String storeURL = yelpURL + "\n Sent from Indiceision.";
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.putExtra(Intent.EXTRA_TEXT, storeURL);
                 shareIntent.setType("text/plain");
@@ -587,8 +590,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         Button callButton = findViewById(R.id.call_button);
         callButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String teliNumber = "2065472369"; //TODO:Get this from Yelp API
-                Uri phoneNumber = Uri.parse("tel:" + teliNumber);
+                Uri phoneNumber = Uri.parse("tel:" + phoneNum);
                 Intent callIntent = new Intent(Intent.ACTION_DIAL, phoneNumber);
                 startActivity(callIntent);
             }
