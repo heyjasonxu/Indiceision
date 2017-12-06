@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "413346747083-q9pj1opvn16fsu3obdrf1hlg5rp7gio3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.uw.info448.indiceision",
+            "certificate_hash": "542da40fb6678fe0070dcb55419247c0b31d45f0"
+          }
+        },
+        {
           "client_id": "413346747083-0oucvmc6amvv6o9un3332e97t2efnmjb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

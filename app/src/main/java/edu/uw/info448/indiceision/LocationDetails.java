@@ -5,13 +5,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,7 +32,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -41,13 +39,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -61,45 +52,42 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class LocationDetails extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    public static String TAG = "Detail";
-
     private static final int LOCATION_REQUEST_CODE = 1;
-
-    private MapFragment map;
-
-    private GoogleMap gMap;
-
-    private LocationRequest mLocationRequest;
-
-    private GoogleApiClient mGoogleApiClient;
-
-    private JSONObject rest;
-
-    private JSONObject coor;
-
-    private double lat;
-
-    private double lng;
-
-    private TextView title, price, rating, phone;
-
-    private Location current;
-
+    public static String TAG = "Detail";
     public static List<Review> reviews;
-
+    private MapFragment map;
+    private GoogleMap gMap;
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
+    private JSONObject rest;
+    private JSONObject coor;
+    private double lat;
+    private double lng;
+    private TextView title, price, rating, phone;
+    private Location current;
     private DatabaseReference mDatabase;
     private FirebaseAuth auth;
 
 
     private String rId;
     private int numberSuggested;
+    private int numberLiked;
+    private int numberVisited;
 
     private boolean currentlyOpen;
     private String budget;
     private String distance;
+    private String restaurant;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +102,9 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                     .build();
         }
 
+        restaurant = getIntent().getExtras().getString(DrawingSurfaceView.BUNDLE_KEY);
+
+
         title = (TextView) findViewById(R.id.title);
         price = (TextView) findViewById(R.id.price);
         rating = (TextView) findViewById(R.id.rating);
@@ -122,10 +113,10 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         mDatabase = FirebaseDatabase.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
 
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
 
 
     }
@@ -138,7 +129,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
@@ -154,7 +145,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                                 Toast.makeText(LocationDetails.this, "Signed out", Toast.LENGTH_SHORT).show();
                             }
                         });
-
+                startActivity(new Intent(this, Introduction.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -209,7 +200,6 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
 
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet(url);
-
         // add request header
         request.setHeader("Authorization", "Bearer " + token);
 
@@ -233,39 +223,34 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     }
 
 
+    private void getRestaurant(JSONObject results) throws Exception {
 
-    private void getRestaurant() throws Exception {
-        JSONObject results = new JSONObject(search());
-        JSONArray list = results.getJSONArray("businesses");
-        Random rand = new Random();
-        int r = rand.nextInt(list.length());
 
         FirebaseUser user = auth.getCurrentUser();
 
-        rest = list.getJSONObject(r);
+        rest = results;
         rId = rest.get("id").toString();
-
+//        rId = "din-tai-fung-seattle";
 
 
         coor = rest.getJSONObject("coordinates");
         lat = Double.parseDouble(coor.get("latitude").toString());
         lng = Double.parseDouble(coor.get("longitude").toString());
         final String pn = rest.get("phone").toString();
-        final TextView reviews = (TextView)findViewById(R.id.reviews);
+        final TextView reviews = (TextView) findViewById(R.id.reviews);
 
 //        Log.v(TAG, rest.toString());
         Log.v(TAG, lat + "");
         Log.v(TAG, lng + "");
         Log.v(TAG, rest.get("rating").toString());
         Log.v(TAG, rest.get("phone").toString());
-        Log.v(TAG,coor.get("latitude").toString());
-        Log.v(TAG,coor.get("longitude").toString());
+        Log.v(TAG, "This is the " + coor.get("latitude").toString());
+        Log.v(TAG, coor.get("longitude").toString());
 
 
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
 
                 try {
                     title.setText(rest.get("name").toString());
@@ -303,15 +288,37 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                         .position(l)
                         .title("Marker"));
                 gMap.moveCamera(CameraUpdateFactory.newLatLng(l));
-            }
-        });
+
+//        });
 
 
-        mDatabase.child("restaurants").child(rId).child("numberSuggested").addListenerForSingleValueEvent(new ValueEventListener() {
+        //Set our rating.
+        mDatabase.child("restaurants").child(rId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                numberSuggested = (int) dataSnapshot.getChildrenCount();
+                DataSnapshot suggested = dataSnapshot.child("numberSuggested");
+                numberSuggested = (int) suggested.getChildrenCount();
+                DataSnapshot visited = dataSnapshot.child("numberVisited");
+                numberVisited = (int) visited.getChildrenCount();
+                DataSnapshot liked = dataSnapshot.child("numberLiked");
+                numberLiked = (int) liked.getChildrenCount();
+                String ourRating = "";
+
+                if (numberSuggested == 1) {
+                    ourRating = "You are the first person to be suggested this restaurant!";
+                } else {
+
+                    ourRating = "Ratings from the Indiceisive: Out of " + numberSuggested +
+                            " users that were suggested this restaurant, " + numberVisited +
+                            " users visited the restaurant and " + numberLiked + " liked it";
+                }
+
+                TextView ourRatingText = (TextView) findViewById(R.id.indice_rating);
+                ourRatingText.setText(ourRating);
                 Log.v(TAG, "Here is numberSuggested " + numberSuggested);
+                Log.v(TAG, "Here is numberVisited " + numberVisited);
+                Log.v(TAG, "Here is numberLiked " + numberLiked);
+
             }
 
             @Override
@@ -326,10 +333,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         mDatabase.child("restaurants").child(rId).child("restaurantName").setValue(rest.get("name"));
 
 
-
-
         getReviews(rest.get("id").toString());
-
 
 
     }
@@ -371,7 +375,7 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     public void saveReviews(String reviews) throws JSONException {
         JSONObject obj = new JSONObject(reviews);
         JSONArray list = obj.getJSONArray("reviews");
-        for(int i = 0; i < list.length(); i++) {
+        for (int i = 0; i < list.length(); i++) {
             JSONObject rev = list.getJSONObject(i);
             JSONObject user = rev.getJSONObject("user");
             this.reviews.add(new Review(user.get("name").toString(), rev.get("time_created").toString(),
@@ -382,6 +386,19 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
+        try {
+            Log.v(TAG, "getRestaurant");
+
+            //Log.v("restaurant here: ", restaurant);
+
+            JSONObject results = new JSONObject(restaurant);
+
+            getRestaurant(results);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
     }
 
     @Override
@@ -407,9 +424,8 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 
-
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             //have permission, can go ahead and do stuff
 
             //assumes location settings enabled
@@ -417,27 +433,24 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
             current = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             //START API CALL
-            new Task().execute();
 
 //            Location l = new Location("Mock");
 //            l.setLatitude(47.6550);
 //            l.setLongitude(-122.3080);
 //            LocationServices.FusedLocationApi.setMockLocation(mGoogleApiClient, l);
-        }
-        else {
+        } else {
             //request permission
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
         }
-
 
 
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode){
+        switch (requestCode) {
             case LOCATION_REQUEST_CODE: {
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     //START API CALL
                     onConnected(null);
@@ -461,27 +474,18 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onLocationChanged(Location location) {
         current = location;
-        Log.v(TAG,  "Latitude: " + location.getLatitude());
-        Log.v(TAG,  "Longitude: " + location.getLongitude());
+        Log.v(TAG, "Latitude: " + location.getLatitude());
+        Log.v(TAG, "Longitude: " + location.getLongitude());
     }
 
     private String formatPhoneNumber(String phone) {
         Log.v(TAG, phone);
-        return "(" + phone.substring(2, 5) + ") "
-                + phone.substring(5, 8) + "-" + phone.substring(8, 12);
-    }
-
-
-    private class Task extends AsyncTask<String, String, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                getRestaurant();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
+        if (phone != null) {
+            return "(" + phone.substring(2, 5) + ") "
+                    + phone.substring(5, 8) + "-" + phone.substring(8, 12);
         }
+        return "No phone number provided";
     }
+
+
 }
