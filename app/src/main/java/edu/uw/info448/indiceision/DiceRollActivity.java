@@ -28,15 +28,12 @@ import java.util.Random;
 public class DiceRollActivity extends AppCompatActivity implements SensorEventListener {
 
     private static final String TAG = "Main";
+    public static SharedPreferences preferences;
     private Long lastUpdate = null;
     private float scaleFactor = .03f;
-
     private DrawingSurfaceView view;
-
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
-    public static SharedPreferences preferences;
-
     private boolean focus = false;
 
     @Override
@@ -57,8 +54,6 @@ public class DiceRollActivity extends AppCompatActivity implements SensorEventLi
             Log.e(TAG, "No accelerometer");
         }
         startSensor();
-
-
     }
 
     @Override
@@ -204,7 +199,5 @@ public class DiceRollActivity extends AppCompatActivity implements SensorEventLi
             return true; //we got this
         }
     }
-
-
 }
 
