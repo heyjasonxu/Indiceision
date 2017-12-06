@@ -8,17 +8,6 @@
     tools:context="edu.uw.info448.indiceision.Reviews"
     tools:showIn="@layout/activity_reviews">
 
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/review_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:columnWidth="90dp"
-        android:numColumns="1"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:stretchMode="columnWidth"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        />
+
 
 </android.support.constraint.ConstraintLayout>
