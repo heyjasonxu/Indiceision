@@ -6,14 +6,30 @@ package edu.uw.info448.indiceision;
 
 public class Review {
     private String name;
-    private String time;
+    private String date;
     private String rating;
     private String review;
 
-    public Review(String name, String time, String rating, String review) {
+    public Review(String name, String date, String rating, String review) {
         this.name = name;
-        this.time = time;
+        this.date = date;
         this.rating = rating;
         this.review = review;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getDate() {
+        return this.date;
+    }
+
+    public String getRating() {
+        return this.rating;
+    }
+
+    public String getReview() {
+        return this.review;
     }
 }
