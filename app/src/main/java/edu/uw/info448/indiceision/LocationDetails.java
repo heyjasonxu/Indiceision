@@ -530,6 +530,15 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                 yesGoodButton.setAction("Yes:Good");
                 yesBadButton.setAction("Yes:Bad");
                 noButton.setAction("No:None");
+
+                yesGoodButton.putExtra(Intent.EXTRA_TEXT, rId);
+                yesGoodButton.putExtra(Intent.EXTRA_TEXT, name);
+                yesGoodButton.setType("text/plain");
+
+                yesBadButton.putExtra(Intent.EXTRA_TEXT, rId);
+                yesBadButton.putExtra(Intent.EXTRA_TEXT, name);
+                yesBadButton.setType("text/plain");
+
                 //Wraps the intents in PendingIntents
                 PendingIntent piYesGood = PendingIntent.getService(getApplicationContext(), 0, yesGoodButton, 0);
                 PendingIntent piYesBad = PendingIntent.getService(getApplicationContext(), 0, yesBadButton, 0);
