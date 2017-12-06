@@ -110,6 +110,8 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                     .build();
         }
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         restaurant = getIntent().getExtras().getString(DrawingSurfaceView.BUNDLE_KEY);
 
 

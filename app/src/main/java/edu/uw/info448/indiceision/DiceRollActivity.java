@@ -49,6 +49,16 @@ public class DiceRollActivity extends AppCompatActivity implements SensorEventLi
             Log.e(TAG, "No accelerometer");
         }
         startSensor();
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        Log.v(TAG, "on resume");
+        view.started = false;
+        super.onResume();
     }
 
     @Override
@@ -84,9 +94,9 @@ public class DiceRollActivity extends AppCompatActivity implements SensorEventLi
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch(requestCode){
+        switch (requestCode) {
             case DrawingSurfaceView.LOCATION_REQUEST_CODE: { //if asked for location
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     view.onConnected(null); //do whatever we'd do when first connecting (try again)
                 }
             }
