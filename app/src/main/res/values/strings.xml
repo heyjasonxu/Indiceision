@@ -115,4 +115,8 @@
     <string name="yes_good">Yes, it\'s Good</string>
     <string name="yes_bad">Yes, Not Good</string>
     <string name="no">No</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="title_review_list">Reviews</string>
+    <string name="title_review_detail">Review Detail</string>
 </resources>

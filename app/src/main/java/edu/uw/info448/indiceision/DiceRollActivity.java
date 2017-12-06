@@ -2,6 +2,7 @@ package edu.uw.info448.indiceision;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,6 +10,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -33,6 +35,7 @@ public class DiceRollActivity extends AppCompatActivity implements SensorEventLi
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
+    public static SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,7 @@ public class DiceRollActivity extends AppCompatActivity implements SensorEventLi
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (mAccelerometer == null) {
             Log.e(TAG, "No accelerometer");

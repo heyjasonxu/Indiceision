@@ -11,7 +11,7 @@
     <EditTextPreference
         android:key="pref_distance"
         android:title="Desired distance to destination"
-        android:defaultValue="1"
+        android:defaultValue="3200"
         android:inputType="number"
     />
 
