@@ -271,6 +271,11 @@ public class LocationDetails extends AppCompatActivity implements OnMapReadyCall
                     title.setText(rest.get("name").toString());
                     price.setText("Price: " + rest.get("price").toString());
                     rating.setText("Rating: " + rest.get("rating").toString());
+
+//                    if(rest.get("phone").toString() != null) {
+//                        phone.setText(formatPhoneNumber(rest.get("phone").toString()));
+//                    }
+
                     phoneNum = formatPhoneNumber(rest.get("phone").toString());
                     phone.setText(phoneNum);
                     reviews.setText("  (reviews)");
