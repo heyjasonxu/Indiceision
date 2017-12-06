@@ -14,7 +14,7 @@
         android:defaultValue="3200"
         android:inputType="number"
     />
-    
+
 
     <SwitchPreference
         android:key="pref_open"
